@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice to Text</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #333;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #555;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:active {
+            background-color: #3700b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Voice to Text</h1>
+        <button onclick="startListening()">Start Listening</button>
+        <p class="result" id="resultText">Your speech will appear here...</p>
+    </div>
+
+    <script>
+        const resultText = document.getElementById('resultText');
+
+        function startListening() {
+            if ('webkitSpeechRecognition' in window) {
+                const recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.start();
+
+                recognition.onstart = function () {
+                    resultText.innerHTML = "Listening...";
+                };
+
+                recognition.onresult = function (event) {
+                    const voiceCommand = event.results[0][0].transcript;
+                    resultText.innerHTML = `You said: "${voiceCommand}"`;
+                };
+
+                recognition.onerror = function () {
+                    resultText.innerHTML = "Sorry, there was an error.";
+                };
+
+                recognition.onend = function () {
+                    resultText.innerHTML = "Click 'Start Listening' to try again.";
+                };
+            } else {
+                alert("Your browser doesn't support voice recognition. Try Google Chrome.");
+            }
+        }
+    </script>
+</body>
+</html>
