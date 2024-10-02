@@ -60,6 +60,7 @@
 
     <script>
         const resultText = document.getElementById('resultText');
+        let voiceCommand = '';
 
         function startListening() {
             if ('webkitSpeechRecognition' in window) {
@@ -75,8 +76,7 @@
                 };
 
                 recognition.onresult = function (event) {
-                    const voiceCommand = event.results[0][0].transcript;
-                    resultText.innerHTML = `You said: "${voiceCommand}"`;
+                    voiceCommand = event.results[0][0].transcript;
                 };
 
                 recognition.onerror = function () {
@@ -84,11 +84,15 @@
                 };
 
                 recognition.onend = function () {
-                    // Do nothing on end, keep the result displayed
+                    updateResult();
                 };
             } else {
                 alert("Your browser doesn't support voice recognition. Try Google Chrome.");
             }
+        }
+
+        function updateResult() {
+            resultText.innerHTML = `You said: "${voiceCommand}"`;
         }
     </script>
 </body>
