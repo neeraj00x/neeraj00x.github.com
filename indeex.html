@@ -1,93 +1,339 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
+
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice to Text</title>
+
+    <title>Voice Controlled Bulb & Fan</title>
+
+    <!-- Font Awesome for the icons -->
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
     <style>
+
         body {
+
             font-family: 'Arial', sans-serif;
+
             background-color: #f0f4f8;
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             height: 100vh;
+
             margin: 0;
+
         }
+
+
 
         .container {
+
             text-align: center;
+
         }
+
+
+
+        .icons {
+
+            display: flex;
+
+            justify-content: space-around;
+
+            width: 300px;
+
+            margin: 0 auto;
+
+        }
+
+
+
+        .bulb,
+
+        .fan {
+
+            font-size: 100px;
+
+            color: #555;
+
+            transition: color 0.3s ease;
+
+        }
+
+
+
+        .bulb.on {
+
+            color: #ffeb3b;
+
+            /* Bright yellow for bulb when ON */
+
+        }
+
+
+
+        .fan.on {
+
+            color: #03a9f4;
+
+            /* Blue for fan when ON */
+
+            animation: rotate 0.1s linear infinite;
+
+        }
+
+
+
+        @keyframes rotate {
+
+            100% {
+
+                transform: rotate(360deg);
+
+            }
+
+        }
+
+
 
         h1 {
+
             font-size: 36px;
+
             color: #333;
+
+            margin-bottom: 20px;
+
         }
 
-        .result {
-            margin-top: 20px;
-            font-size: 24px;
-            color: #555;
+
+
+        .status {
+
+            font-size: 20px;
+
+            margin-top: 10px;
+
+            color: #666;
+
         }
+
+
 
         button {
+
             margin-top: 20px;
+
             padding: 10px 20px;
+
             font-size: 16px;
+
             background-color: #6200ea;
+
             color: white;
+
             border: none;
+
             border-radius: 5px;
+
             cursor: pointer;
+
         }
+
+
 
         button:focus {
+
             outline: none;
+
         }
+
+
 
         button:active {
+
             background-color: #3700b3;
+
         }
+
     </style>
+
 </head>
+
+
+
 <body>
 
+
+
     <div class="container">
-        <h1>Voice to Text</h1>
+
+        <h1>Voice Controlled Bulb & Fan</h1>
+
+        <div class="icons">
+
+            <i id="bulbIcon" class="fas fa-lightbulb bulb"></i>
+
+            <i id="fanIcon" class="fas fa-fan fan"></i>
+
+        </div>
+
+        <p class="status" id="status">Say 'Light on', 'Light off', 'Fan on' or 'Fan off' to control the devices</p>
+
         <button onclick="startListening()">Start Listening</button>
-        <p class="result" id="resultText">Your speech will appear here...</p>
+
     </div>
 
+
+
     <script>
-        const resultText = document.getElementById('resultText');
+
+        const bulbIcon = document.getElementById('bulbIcon');
+
+        const fanIcon = document.getElementById('fanIcon');
+
+        const statusText = document.getElementById('status');
+
+
 
         function startListening() {
+
             if ('webkitSpeechRecognition' in window) {
+
                 const recognition = new webkitSpeechRecognition();
+
                 recognition.continuous = false;
+
                 recognition.interimResults = false;
-                recognition.lang = '-US';
+
+                recognition.lang = 'en-US';
+
+
 
                 recognition.start();
 
+
+
                 recognition.onstart = function () {
-                    resultText.innerHTML = "Listening...";
+
+                    statusText.innerHTML = "Listening...";
+
                 };
+
+
 
                 recognition.onresult = function (event) {
-                    const voiceCommand = event.results[0][0].transcript;
-                    resultText.innerHTML = `You said: "${voiceCommand}"`;
+
+                    const voiceCommand = event.results[0][0].transcript.toLowerCase();
+
+                    statusText.innerHTML = `You said: "${voiceCommand}"`;
+
+
+
+                    if (voiceCommand.includes("light on") || voiceCommand.includes("bulb on")) {
+
+                        turnOnBulb();
+
+                    } else if (voiceCommand.includes("light off") || voiceCommand.includes("bulb off")) {
+
+                        turnOffBulb();
+
+                    } else if (voiceCommand.includes("fan on")) {
+
+                        turnOnFan();
+
+                    } else if (voiceCommand.includes("fan off")) {
+
+                        turnOffFan();
+
+                    } else {
+
+                        statusText.innerHTML = "Command not recognized. Try 'Turn on' or 'Turn off'";
+
+                    }
+
                 };
+
+
 
                 recognition.onerror = function () {
-                    resultText.innerHTML = "Sorry, there was an error.";
+
+                    statusText.innerHTML = "Sorry, there was an error.";
+
                 };
 
-                
+
+
+                recognition.onend = function () {
+
+                    statusText.innerHTML = "Say 'light on', 'light off', 'fan on' or 'fan off' to control the devices";
+
+                };
+
             } else {
+
                 alert("Your browser doesn't support voice recognition. Try Google Chrome.");
+
             }
+
         }
+
+
+
+        function turnOnBulb() {
+
+            bulbIcon.classList.add('on');
+
+            statusText.innerHTML = "Bulb is turned ON";
+
+        }
+
+
+
+        function turnOffBulb() {
+
+            bulbIcon.classList.remove('on');
+
+            statusText.innerHTML = "Bulb is turned OFF";
+
+        }
+
+
+
+        function turnOnFan() {
+
+            fanIcon.classList.add('on');
+
+            statusText.innerHTML = "Fan is turned ON";
+
+        }
+
+
+
+        function turnOffFan() {
+
+            fanIcon.classList.remove('on');
+
+            statusText.innerHTML = "Fan is turned OFF";
+
+        }
+
     </script>
+
 </body>
+
+
+
 </html>
