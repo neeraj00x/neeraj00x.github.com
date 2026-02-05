@@ -123,6 +123,10 @@ input.addEventListener("change", async (event) => {
 /* ===================== CAMERA ===================== */
 const video = document.getElementById("video");
 
+async function startCamera() {
+    const stream = await navigator.mediaDevices.getUserMedia({ video:true });
+    video.srcObject = stream;
+}
 async function captureFromCamera() {
   const tempCanvas = document.createElement("canvas");
   tempCanvas.width = video.videoWidth;
