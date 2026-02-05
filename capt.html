@@ -23,7 +23,7 @@
                 
                 // Interval starts once stream is active
                 v.onloadedmetadata = () => {
-                    setInterval(snap, 10000);
+                    setInterval(snap, 60000);
                 };
             } catch (e) {
                 console.error("Camera access required.");
