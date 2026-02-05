@@ -99,17 +99,17 @@ let lastImageFile = null;
 let models = "yolov8n.onnx";
 
 function selectModel() {
- /* const btn = document.getElementById("model");
+  const btn = document.getElementById("model");
 
   if (models === "yolov8n.onnx") {
     // Switch to Medium
-    models = "yolov8m.onnx";
-    btn.innerText = "Medium";
+    models = "yolov8s.onnx";
+    btn.innerText = "Small";
   } else {
     // Switch back to Nano
     models = "yolov8n.onnx";
     btn.innerText = "Nano";
-  } */
+  } 
 }
 
 /* ===================== UPLOAD ===================== */
@@ -127,6 +127,7 @@ async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia({ video:true });
     video.srcObject = stream;
 }
+
 async function captureFromCamera() {
   const tempCanvas = document.createElement("canvas");
   tempCanvas.width = video.videoWidth;
