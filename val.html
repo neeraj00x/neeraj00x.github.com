@@ -133,6 +133,7 @@
 
       // Starts the music and transitions text
       function startExperience() {
+		music.volume = 0.5;
         music.play().catch(e => console.log("Audio play blocked until interaction"));
         nextStep();
       }
@@ -231,4 +232,5 @@
       setInterval(createFloatingHeart, 500);
     </script>
   </body>
+
 </html>
