@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sinha Diabetes Centre — Book Appointment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #142850;
+    --teal: #0E8A7A;
+    --teal-light: #13B39E;
+    --teal-pale: #E6F7F5;
+    --gold: #C9A84C;
+    --gold-light: #F0D98A;
+    --cream: #FAF8F3;
+    --white: #FFFFFF;
+    --gray-100: #F4F4F4;
+    --gray-200: #E8E8E8;
+    --gray-400: #9A9A9A;
+    --gray-600: #5A5A5A;
+    --gray-800: #2A2A2A;
+    --red: #D94F3D;
+    --green: #2D9E6B;
+    --shadow-sm: 0 2px 8px rgba(11,31,58,0.08);
+    --shadow-md: 0 8px 32px rgba(11,31,58,0.12);
+    --shadow-lg: 0 20px 60px rgba(11,31,58,0.18);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--gray-800);
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .topnav {
+    background: var(--navy);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .nav-logo {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .nav-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .nav-sub {
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .nav-tab {
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-tab:hover { color: white; background: rgba(255,255,255,0.1); }
+  .nav-tab.active { color: white; background: var(--teal); }
+
+  /* ── MAIN VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ══════════════════════════════
+     PATIENT BOOKING VIEW
+  ══════════════════════════════ */
+  .booking-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #0D3D5A 100%);
+    padding: 48px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .booking-hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(14,138,122,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .booking-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -60px;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(14,138,122,0.2);
+    border: 1px solid rgba(14,138,122,0.4);
+    color: var(--teal-light);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--white);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .hero-title span { color: var(--gold-light); }
+  .hero-subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 32px;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-num {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-light);
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .hero-stat-label {
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+  }
+
+  /* BOOKING STEPPER */
+  .booking-container {
+    max-width: 680px;
+    margin: -28px auto 48px;
+    padding: 0 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .steps-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    background: var(--white);
+    padding: 16px 20px;
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+  }
+  .step-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  .step-dot:not(:last-child)::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: var(--gray-200);
+    margin: 0 8px;
+    transition: background 0.3s;
+  }
+  .step-dot.done::after { background: var(--teal); }
+  .step-circle {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--gray-200);
+    color: var(--gray-400);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+  }
+  .step-dot.active .step-circle { background: var(--teal); color: white; }
+  .step-dot.done .step-circle { background: var(--navy); color: white; }
+  .step-label {
+    font-size: 12px;
+    color: var(--gray-400);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .step-dot.active .step-label { color: var(--teal); }
+  .step-dot.done .step-label { color: var(--navy); }
+
+  .booking-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .card-section {
+    display: none;
+    padding: 32px;
+    animation: fadeUp 0.35s ease;
+  }
+  .card-section.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--gray-400);
+    margin-bottom: 28px;
+  }
+
+  /* DATE PICKER */
+  .date-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .date-btn {
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .date-btn:hover { border-color: var(--teal); background: var(--teal-pale); }
+  .date-btn.selected { border-color: var(--teal); background: var(--teal-pale); }
+  .date-btn.full { border-color: var(--gray-200); background: var(--gray-100); cursor: not-allowed; opacity: 0.6; }
+  .date-day { font-size: 11px; color: var(--gray-400); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+  .date-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--navy); margin: 2px 0; }
+  .date-mon { font-size: 11px; color: var(--gray-600); }
+  .date-slots { font-size: 10px; margin-top: 4px; font-weight: 600; }
+  .date-slots.available { color: var(--green); }
+  .date-slots.few { color: var(--gold); }
+  .date-slots.none { color: var(--red); }
+  .full-tag {
+    position: absolute;
+    top: -8px; right: 8px;
+    background: var(--red);
+    color: white;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+  }
+  .date-btn.selected .date-day,
+  .date-btn.selected .date-num,
+  .date-btn.selected .date-mon { color: var(--teal); }
+
+  /* SLOT PICKER */
+  .slot-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--teal-pale);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--teal);
+  }
+  .slot-info-text { font-size: 13px; color: var(--teal); font-weight: 500; }
+  .slot-info-count {
+    background: var(--teal);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .slot-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .slot-btn {
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .slot-btn:hover:not(.booked) { border-color: var(--teal); background: var(--teal-pale); }
+  .slot-btn.selected { border-color: var(--teal); background: var(--teal); color: white; }
+  .slot-btn.booked { background: var(--gray-100); border-color: var(--gray-200); cursor: not-allowed; }
+  .slot-time { font-size: 12px; font-weight: 600; color: inherit; }
+  .slot-token { font-size: 10px; color: var(--gray-400); margin-top: 2px; }
+  .slot-btn.selected .slot-token { color: rgba(255,255,255,0.7); }
+  .slot-btn.booked .slot-time { color: var(--gray-400); }
+  .booked-label { font-size: 9px; color: var(--red); font-weight: 600; }
+
+  /* FORM */
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--gray-600); letter-spacing: 0.4px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+  .form-input {
+    width: 100%;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--gray-800);
+    background: var(--white);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-input:focus { border-color: var(--teal); }
+  .form-input::placeholder { color: var(--gray-400); }
+  select.form-input { cursor: pointer; }
+  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-btn {
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-600);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .radio-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .radio-btn.active { border-color: var(--teal); background: var(--teal-pale); color: var(--teal); }
+
+  /* PAYMENT */
+  .payment-summary {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    color: white;
+  }
+  .payment-header { font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 16px; }
+  .payment-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .payment-label { font-size: 14px; color: rgba(255,255,255,0.7); }
+  .payment-val { font-size: 14px; color: white; font-weight: 500; }
+  .payment-divider { height: 1px; background: rgba(255,255,255,0.15); margin: 14px 0; }
+  .payment-total-label { font-size: 14px; font-weight: 600; color: var(--gold-light); }
+  .payment-total-val { font-size: 22px; font-weight: 700; color: var(--gold-light); font-family: 'Playfair Display', serif; }
+  .payment-booking-info {
+    margin-top: 16px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .pbi-row { display: flex; gap: 8px; align-items: center; font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 6px; }
+  .pbi-row:last-child { margin-bottom: 0; }
+  .pbi-row span:first-child { font-size: 15px; }
+
+  .upi-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .upi-btn {
+    border: 2px solid var(--gray-200);
+    background: var(--white);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .upi-btn:hover { border-color: var(--teal); background: var(--teal-pale); }
+  .upi-btn.selected { border-color: var(--teal); background: var(--teal-pale); }
+  .upi-icon { font-size: 24px; margin-bottom: 4px; }
+  .upi-name { font-size: 11px; font-weight: 600; color: var(--gray-600); }
+
+  .pay-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .pay-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(14,138,122,0.35); }
+  .pay-btn:active { transform: translateY(0); }
+  .pay-btn.loading { opacity: 0.8; cursor: wait; }
+
+  /* CONFIRMATION */
+  .confirm-wrapper {
+    text-align: center;
+    padding: 12px 0 8px;
+  }
+  .confirm-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    margin: 0 auto 20px;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .confirm-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .confirm-msg { font-size: 14px; color: var(--gray-400); margin-bottom: 28px; }
+  .confirm-ticket {
+    background: var(--cream);
+    border: 2px dashed var(--gray-200);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+  .confirm-ticket::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 6px; height: 100%;
+    background: linear-gradient(180deg, var(--teal), var(--teal-light));
+  }
+  .ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .ticket-clinic { font-size: 11px; color: var(--gray-400); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+  .ticket-token-big {
+    background: var(--navy);
+    color: var(--gold-light);
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+  }
+  .ticket-rows { display: flex; flex-direction: column; gap: 10px; }
+  .ticket-row { display: flex; gap: 10px; align-items: center; }
+  .ticket-icon { font-size: 16px; width: 24px; text-align: center; }
+  .ticket-info-label { font-size: 10px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.4px; }
+  .ticket-info-val { font-size: 14px; color: var(--navy); font-weight: 600; }
+  .btn-secondary {
+    width: 100%;
+    background: var(--teal-pale);
+    color: var(--teal);
+    border: 2px solid var(--teal);
+    border-radius: 12px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--teal); color: white; }
+
+  /* NAV BUTTONS */
+  .nav-btns { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-back {
+    background: var(--white);
+    border: 2px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+  .btn-next {
+    flex: 1;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-next:hover { background: var(--teal); transform: translateY(-1px); }
+  .btn-next:disabled { background: var(--gray-200); color: var(--gray-400); transform: none; cursor: not-allowed; }
+
+  /* INFO FOOTER */
+  .info-strip {
+    background: var(--navy);
+    padding: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    text-align: center;
+  }
+  .info-item-icon { font-size: 24px; margin-bottom: 8px; }
+  .info-item-title { font-size: 13px; font-weight: 600; color: var(--gold-light); margin-bottom: 4px; }
+  .info-item-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+  /* ══════════════════════════════
+     RECEPTIONIST DASHBOARD
+  ══════════════════════════════ */
+  .dashboard {
+    padding: 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+  .dash-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: var(--navy);
+  }
+  .dash-date-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    transition: all 0.2s;
+  }
+  .dash-date-selector:hover { border-color: var(--teal); }
+
+  /* STAT CARDS */
+  .stat-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    border-top: 4px solid transparent;
+    transition: all 0.2s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .stat-card.navy { border-top-color: var(--navy); }
+  .stat-card.teal { border-top-color: var(--teal); }
+  .stat-card.gold { border-top-color: var(--gold); }
+  .stat-card.red { border-top-color: var(--red); }
+  .stat-icon { font-size: 22px; margin-bottom: 10px; }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+  /* PROGRESS BAR */
+  .capacity-bar-wrap {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .capacity-label { font-size: 13px; font-weight: 600; color: var(--gray-600); white-space: nowrap; }
+  .capacity-bar {
+    flex: 1;
+    height: 12px;
+    background: var(--gray-100);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .capacity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    border-radius: 6px;
+    transition: width 1s ease;
+  }
+  .capacity-pct { font-size: 13px; font-weight: 700; color: var(--navy); white-space: nowrap; }
+
+  /* PATIENT LIST */
+  .patients-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .patients-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    border-bottom: 2px solid var(--gray-100);
+  }
+  .patients-title { font-size: 16px; font-weight: 600; color: var(--navy); }
+  .search-input {
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 200px;
+  }
+  .search-input:focus { border-color: var(--teal); }
+  .patient-row {
+    display: grid;
+    grid-template-columns: 48px 1fr 120px 100px 80px 90px;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-100);
+    gap: 12px;
+    transition: background 0.15s;
+  }
+  .patient-row:hover { background: var(--teal-pale); }
+  .patient-row.header-row {
+    background: var(--gray-100);
+    border-bottom: 2px solid var(--gray-200);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .patient-row.header-row:hover { background: var(--gray-100); }
+  .token-badge {
+    background: var(--navy);
+    color: var(--gold-light);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+  }
+  .patient-name { font-size: 14px; font-weight: 600; color: var(--navy); }
+  .patient-phone { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+  .patient-time { font-size: 13px; color: var(--gray-600); }
+  .patient-type { font-size: 11px; font-weight: 600; }
+  .patient-type.new { color: var(--teal); }
+  .patient-type.followup { color: var(--gold); }
+  .status-pill {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-align: center;
+  }
+  .status-pill.confirmed { background: #E8F8F0; color: var(--green); }
+  .status-pill.waiting { background: #FFF5E0; color: #B07D00; }
+  .status-pill.cancelled { background: #FEE8E6; color: var(--red); }
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--gray-200);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .action-btn:hover { border-color: var(--red); color: var(--red); }
+  .action-btn.attend:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--navy);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid var(--teal);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* MOBILE RESPONSIVE */
+  @media (max-width: 600px) {
+    .hero-title { font-size: 26px; }
+    .date-grid { grid-template-columns: repeat(2, 1fr); }
+    .slot-grid { grid-template-columns: repeat(3, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .upi-options { grid-template-columns: repeat(2, 1fr); }
+    .stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .info-strip { grid-template-columns: 1fr; }
+    .patient-row { grid-template-columns: 40px 1fr 70px; }
+    .patient-row > *:nth-child(4),
+    .patient-row > *:nth-child(5) { display: none; }
+  }
+</style>
+
+<style id="mobile-enhancement-patch">
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.analytics-card,.future-bookings-card,.summary-card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:24px}
+.big-num{font-size:32px;font-weight:700}
+.future-day-top{display:flex;justify-content:space-between;margin-bottom:8px}
+.mini-progress{height:10px;background:#eee;border-radius:10px;overflow:hidden}
+.mini-fill{height:100%;background:linear-gradient(90deg,#0E8A7A,#13B39E)}
+.summary-table{width:100%;border-collapse:collapse}
+.summary-table th,.summary-table td{padding:12px;border-bottom:1px solid #eee;text-align:left}
+
+@media(max-width:768px){
+body{overflow-x:hidden}
+.topnav{flex-direction:column;height:auto;padding:12px;gap:12px;align-items:stretch}
+.nav-tabs{width:100%;display:grid;grid-template-columns:1fr 1fr}
+.nav-tab{width:100%}
+.booking-hero{padding:28px 16px 48px}
+.hero-title{font-size:30px}
+.booking-container{padding:0 12px}
+.steps-indicator{overflow:auto}
+.date-grid,.slot-grid,.stat-cards{grid-template-columns:1fr 1fr}
+.form-row,.analytics-grid,.info-strip{grid-template-columns:1fr}
+.upi-options{grid-template-columns:1fr}
+.nav-btns{flex-direction:column}
+.patient-row{grid-template-columns:1fr;padding:16px}
+.patient-row.header-row{display:none}
+.search-input{width:100%}
+}
+</style>
+
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="nav-brand">
+    <div class="nav-logo">🏥</div>
+    <div>
+      <div class="nav-title">Sinha Diabetes Centre</div>
+      <div class="nav-sub">Endocrinology & Maternity</div>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchView('patient')">Book Appointment</button>
+    <button class="nav-tab" onclick="switchView('dashboard')">Receptionist Dashboard</button>
+  </div>
+</nav>
+
+<!-- ══ PATIENT VIEW ══ -->
+<div id="view-patient" class="view active">
+
+  <div class="booking-hero">
+    <div class="hero-badge">✅ Online Booking Open</div>
+    <h1 class="hero-title">Book Your Slot<br>with <span>Dr. Sinha</span></h1>
+    <p class="hero-subtitle">Diabetes • Endocrinology • Maternity — Mon to Sat, 9 AM – 2 PM</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">60</div>
+        <div class="hero-stat-label">Slots / Day</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">₹1,000</div>
+        <div class="hero-stat-label">Consultation Fee</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">15+</div>
+        <div class="hero-stat-label">Years Experience</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="booking-container">
+
+    <!-- STEP INDICATOR -->
+    <div class="steps-indicator">
+      <div class="step-dot active" id="step1-dot">
+        <div class="step-circle">1</div>
+        <span class="step-label">Date & Slot</span>
+      </div>
+      <div class="step-dot" id="step2-dot">
+        <div class="step-circle">2</div>
+        <span class="step-label">Your Details</span>
+      </div>
+      <div class="step-dot" id="step3-dot">
+        <div class="step-circle">3</div>
+        <span class="step-label">Payment</span>
+      </div>
+      <div class="step-dot" id="step4-dot">
+        <div class="step-circle">✓</div>
+        <span class="step-label">Confirmed</span>
+      </div>
+    </div>
+
+    <div class="booking-card">
+
+      <!-- STEP 1: DATE + SLOT -->
+      <div class="card-section active" id="step1">
+        <h2 class="section-title">Choose a Date</h2>
+        <p class="section-sub">Select an available appointment date</p>
+
+        <div class="date-grid" id="date-grid"></div>
+
+        <div id="slot-section" style="display:none">
+          <h2 class="section-title" style="margin-top:8px">Choose a Time Slot</h2>
+          <p class="section-sub">Pick your preferred appointment time</p>
+          <div class="slot-info-bar">
+            <span class="slot-info-text" id="slot-info-text">Select a slot below</span>
+            <span class="slot-info-count" id="slot-count-badge">-- left</span>
+          </div>
+          <div class="slot-grid" id="slot-grid"></div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn-next" id="btn-to-step2" onclick="goToStep(2)" disabled>
+            Continue — Enter Details →
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: PATIENT DETAILS -->
+      <div class="card-section" id="step2">
+        <h2 class="section-title">Patient Details</h2>
+        <p class="section-sub">Please fill in the patient's information</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input class="form-input" id="inp-name" type="text" placeholder="e.g. Ramesh Sharma">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mobile Number *</label>
+            <input class="form-input" id="inp-phone" type="tel" maxlength="10" placeholder="10-digit number">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Age *</label>
+            <input class="form-input" id="inp-age" type="number" placeholder="e.g. 45" min="1" max="120">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <div class="radio-group">
+              <button class="radio-btn active" onclick="selectGender(this,'Male')">Male</button>
+              <button class="radio-btn" onclick="selectGender(this,'Female')">Female</button>
+              <button class="radio-btn" onclick="selectGender(this,'Other')">Other</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Reason for Visit *</label>
+          <select class="form-input" id="inp-reason">
+            <option value="">Select reason...</option>
+            <option>Diabetes Consultation</option>
+            <option>Thyroid / Hormone Check</option>
+            <option>Blood Sugar Review</option>
+            <option>Maternity / Pregnancy</option>
+            <option>Follow-up Visit</option>
+            <option>General Endocrinology</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Visit Type</label>
+          <div class="radio-group">
+            <button class="radio-btn active" onclick="selectVisitType(this,'New Patient')">New Patient</button>
+            <button class="radio-btn" onclick="selectVisitType(this,'Follow-up')">Follow-up</button>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn-back" onclick="goToStep(1)">← Back</button>
+          <button class="btn-next" onclick="goToStep(3)">
+            Review & Pay →
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: PAYMENT -->
+      <div class="card-section" id="step3">
+        <h2 class="section-title">Review & Pay</h2>
+        <p class="section-sub">Confirm your details and complete payment</p>
+
+        <div class="payment-summary" id="payment-summary-box"></div>
+
+        <p style="font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.4px">Pay Via</p>
+        <div class="upi-options">
+          <div class="upi-btn selected" onclick="selectUpi(this)">
+            <div class="upi-icon">📱</div>
+            <div class="upi-name">PhonePe</div>
+          </div>
+          <div class="upi-btn" onclick="selectUpi(this)">
+            <div class="upi-icon">💚</div>
+            <div class="upi-name">Google Pay</div>
+          </div>
+          <div class="upi-btn" onclick="selectUpi(this)">
+            <div class="upi-icon">🔵</div>
+            <div class="upi-name">Paytm</div>
+          </div>
+        </div>
+
+        <button class="pay-btn" id="pay-btn" onclick="processPayment()">
+          <span>🔒</span> Pay ₹1,020 & Confirm Booking
+        </button>
+
+        <div class="nav-btns" style="margin-top:14px">
+          <button class="btn-back" onclick="goToStep(2)">← Back</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: CONFIRMATION -->
+      <div class="card-section" id="step4">
+        <div class="confirm-wrapper">
+          <div class="confirm-icon">✅</div>
+          <h2 class="confirm-title">Booking Confirmed!</h2>
+          <p class="confirm-msg">Your appointment has been booked. A confirmation has been sent to your mobile.</p>
+
+          <div class="confirm-ticket" id="confirm-ticket"></div>
+
+          <button class="btn-secondary" onclick="bookAnother()">Book Another Appointment</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="info-strip">
+    <div>
+      <div class="info-item-icon">📞</div>
+      <div class="info-item-title">Need Help?</div>
+      <div class="info-item-text">Call reception at<br>+91 97XXX XXXXX</div>
+    </div>
+    <div>
+      <div class="info-item-icon">⏰</div>
+      <div class="info-item-title">Clinic Hours</div>
+      <div class="info-item-text">Mon – Sat<br>9:00 AM to 2:00 PM</div>
+    </div>
+    <div>
+      <div class="info-item-icon">📍</div>
+      <div class="info-item-title">Location</div>
+      <div class="info-item-text">Gorakhpur, U.P.<br>[Full address here]</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ DASHBOARD VIEW ══ -->
+<div id="view-dashboard" class="view">
+  <div class="dashboard">
+    <div class="dash-header">
+      <h1 class="dash-title">Today's Appointments</h1>
+      <div class="dash-date-selector" id="dash-date-label">📅 Loading...</div>
+    </div>
+
+    
+<div class="analytics-grid">
+<div class="analytics-card"><h4>Today</h4><div class="big-num">48</div><p>Appointments</p></div>
+<div class="analytics-card"><h4>This Week</h4><div class="big-num">312</div><p>Total Patients</p></div>
+<div class="analytics-card"><h4>This Month</h4><div class="big-num">₹4.2L</div><p>Revenue</p></div>
+</div>
+
+<div class="future-bookings-card">
+<h3>Upcoming Booking Status</h3>
+
+<div class="future-day-row">
+<div class="future-day-top"><span>Fri, 22 May</span><span>53 / 60 booked</span></div>
+<div class="mini-progress"><div class="mini-fill" style="width:88%"></div></div>
+</div>
+
+<div class="future-day-row">
+<div class="future-day-top"><span>Sat, 23 May</span><span>41 / 60 booked</span></div>
+<div class="mini-progress"><div class="mini-fill" style="width:68%"></div></div>
+</div>
+</div>
+<div class="stat-cards">
+      <div class="stat-card navy">
+        <div class="stat-icon">📋</div>
+        <div class="stat-num" id="stat-total">—</div>
+        <div class="stat-label">Total Booked</div>
+      </div>
+      <div class="stat-card teal">
+        <div class="stat-icon">✅</div>
+        <div class="stat-num" id="stat-confirmed">—</div>
+        <div class="stat-label">Confirmed</div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-num" id="stat-waiting">—</div>
+        <div class="stat-label">Waiting</div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon">💰</div>
+        <div class="stat-num" id="stat-revenue">—</div>
+        <div class="stat-label">Revenue Today</div>
+      </div>
+    </div>
+
+    <div class="capacity-bar-wrap">
+      <span class="capacity-label">📊 Slot Capacity</span>
+      <div class="capacity-bar">
+        <div class="capacity-fill" id="capacity-fill" style="width:0%"></div>
+      </div>
+      <span class="capacity-pct" id="capacity-pct">0 / 60</span>
+    </div>
+
+    <div class="patients-card">
+      <div class="patients-header">
+        <span class="patients-title">Patient List</span>
+        <input class="search-input" type="text" placeholder="🔍 Search patient..." oninput="filterPatients(this.value)">
+      </div>
+      <div class="patient-row header-row">
+        <div>Token</div>
+        <div>Patient</div>
+        <div>Time</div>
+        <div>Visit Type</div>
+        <div>Status</div>
+        <div>Action</div>
+      </div>
+      <div id="patient-list"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="summary-card">
+<h3>Historical Summary</h3>
+<table class="summary-table">
+<tr><th>Date</th><th>Booked</th><th>Attended</th><th>Cancelled</th><th>Revenue</th></tr>
+<tr><td>20 May</td><td>52</td><td>46</td><td>4</td><td>₹46,000</td></tr>
+<tr><td>19 May</td><td>48</td><td>42</td><td>3</td><td>₹42,000</td></tr>
+<tr><td>18 May</td><td>57</td><td>50</td><td>2</td><td>₹50,000</td></tr>
+</table>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✅</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<script>
+// ── STATE ──
+const today = new Date();
+let selectedDate = null;
+let selectedSlot = null;
+let patientData = { gender: 'Male', visitType: 'New Patient' };
+let currentStep = 1;
+
+// Generate demo dates (next 6 Mon–Sat)
+const dates = [];
+const d = new Date(today);
+let count = 0;
+while (count < 6) {
+  if (d.getDay() !== 0) { // skip Sundays
+    dates.push(new Date(d));
+    count++;
+  }
+  d.setDate(d.getDate() + 1);
+}
+
+// Random slot data per date
+const dateSlotData = {};
+dates.forEach((dt, i) => {
+  const taken = i === 0 ? 60 : i === 1 ? 53 : i === 2 ? 41 : i === 3 ? 18 : i === 4 ? 5 : 0;
+  dateSlotData[dt.toDateString()] = taken;
+});
+
+const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── RENDER DATES ──
+function renderDates() {
+  const grid = document.getElementById('date-grid');
+  grid.innerHTML = '';
+  dates.forEach((dt, i) => {
+    const taken = dateSlotData[dt.toDateString()];
+    const left = 60 - taken;
+    const full = left === 0;
+    const btn = document.createElement('div');
+    btn.className = 'date-btn' + (full ? ' full' : '');
+    let slotsClass = left > 20 ? 'available' : left > 0 ? 'few' : 'none';
+    let slotsText = full ? 'Fully Booked' : left <= 5 ? `Only ${left} left!` : `${left} slots left`;
+    btn.innerHTML = `
+      ${full ? '<div class="full-tag">FULL</div>' : ''}
+      <div class="date-day">${days[dt.getDay()]}</div>
+      <div class="date-num">${dt.getDate()}</div>
+      <div class="date-mon">${months[dt.getMonth()]}</div>
+      <div class="date-slots ${slotsClass}">${slotsText}</div>
+    `;
+    if (!full) {
+      btn.onclick = () => selectDate(btn, dt);
+    }
+    grid.appendChild(btn);
+  });
+}
+
+function selectDate(btn, dt) {
+  document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedDate = dt;
+  selectedSlot = null;
+  document.getElementById('btn-to-step2').disabled = true;
+  renderSlots(dt);
+}
+
+// ── RENDER SLOTS ──
+function renderSlots(dt) {
+  const taken = dateSlotData[dt.toDateString()];
+  const leftCount = 60 - taken;
+  document.getElementById('slot-section').style.display = 'block';
+  document.getElementById('slot-info-text').textContent =
+    `Appointments for ${days[dt.getDay()]}, ${dt.getDate()} ${months[dt.getMonth()]}`;
+  document.getElementById('slot-count-badge').textContent = `${leftCount} slots left`;
+
+  // Generate time slots 9:00 AM to 1:45 PM in 5 min chunks, 60 total
+  const grid = document.getElementById('slot-grid');
+  grid.innerHTML = '';
+  const startMin = 9 * 60; // 9:00 AM
+  for (let i = 0; i < 60; i++) {
+    const m = startMin + i * 5;
+    const hh = Math.floor(m / 60);
+    const mm = m % 60;
+    const ampm = hh < 12 ? 'AM' : 'PM';
+    const h12 = hh > 12 ? hh - 12 : hh;
+    const timeStr = `${h12}:${mm.toString().padStart(2,'0')} ${ampm}`;
+    const isBooked = i < taken;
+    const btn = document.createElement('div');
+    btn.className = 'slot-btn' + (isBooked ? ' booked' : '');
+    btn.innerHTML = `
+      <div class="slot-time">${timeStr}</div>
+      <div class="slot-token">${isBooked ? '<span class="booked-label">TAKEN</span>' : `#${i+1}`}</div>
+    `;
+    if (!isBooked) {
+      btn.onclick = () => selectSlot(btn, i+1, timeStr);
+    }
+    grid.appendChild(btn);
+  }
+}
+
+function selectSlot(btn, token, time) {
+  document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedSlot = { token, time };
+  document.getElementById('btn-to-step2').disabled = false;
+}
+
+// ── STEP NAVIGATION ──
+function goToStep(n) {
+  // Validate step 2 inputs
+  if (n === 3) {
+    const name = document.getElementById('inp-name').value.trim();
+    const phone = document.getElementById('inp-phone').value.trim();
+    const age = document.getElementById('inp-age').value.trim();
+    const reason = document.getElementById('inp-reason').value;
+    if (!name || !phone || !age || !reason) {
+      showToast('⚠️', 'Please fill in all required fields');
+      return;
+    }
+    if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+      showToast('⚠️', 'Please enter a valid 10-digit mobile number');
+      return;
+    }
+    patientData.name = name;
+    patientData.phone = phone;
+    patientData.age = age;
+    patientData.reason = reason;
+    renderPaymentSummary();
+  }
+
+  currentStep = n;
+  document.querySelectorAll('.card-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  updateStepDots(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepDots(n) {
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('step' + i + '-dot');
+    dot.classList.remove('active', 'done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  }
+}
+
+// ── RADIO SELECTS ──
+function selectGender(btn, val) {
+  btn.closest('.radio-group').querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  patientData.gender = val;
+}
+function selectVisitType(btn, val) {
+  btn.closest('.radio-group').querySelectorAll('.radio-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  patientData.visitType = val;
+}
+function selectUpi(btn) {
+  document.querySelectorAll('.upi-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+// ── PAYMENT SUMMARY ──
+function renderPaymentSummary() {
+  const box = document.getElementById('payment-summary-box');
+  box.innerHTML = `
+    <div class="payment-header">Booking Summary</div>
+    <div class="payment-row">
+      <span class="payment-label">Patient Name</span>
+      <span class="payment-val">${patientData.name}</span>
+    </div>
+    <div class="payment-divider"></div>
+    <div class="payment-row">
+      <span class="payment-label">Consultation Fee</span>
+      <span class="payment-val">₹1,000</span>
+    </div>
+    <div class="payment-row">
+      <span class="payment-label">Convenience Fee</span>
+      <span class="payment-val">₹20</span>
+    </div>
+    <div class="payment-divider"></div>
+    <div class="payment-row">
+      <span class="payment-total-label">Total Payable</span>
+      <span class="payment-total-val">₹1,020</span>
+    </div>
+    <div class="payment-booking-info">
+      <div class="pbi-row"><span>📅</span><span>${days[selectedDate.getDay()]}, ${selectedDate.getDate()} ${months[selectedDate.getMonth()]} ${selectedDate.getFullYear()}</span></div>
+      <div class="pbi-row"><span>⏰</span><span>${selectedSlot.time} — Token #${selectedSlot.token}</span></div>
+      <div class="pbi-row"><span>🏥</span><span>${patientData.reason}</span></div>
+      <div class="pbi-row"><span>👤</span><span>${patientData.visitType} · Age ${patientData.age} · ${patientData.gender}</span></div>
+    </div>
+  `;
+}
+
+// ── PAYMENT PROCESSING ──
+function processPayment() {
+  const btn = document.getElementById('pay-btn');
+  btn.classList.add('loading');
+  btn.innerHTML = '⏳ Processing Payment...';
+  setTimeout(() => {
+    // Add to dashboard data
+    addPatientToDashboard();
+    // Update slot data
+    dateSlotData[selectedDate.toDateString()]++;
+    goToStep(4);
+    renderConfirmation();
+    btn.classList.remove('loading');
+    btn.innerHTML = '<span>🔒</span> Pay ₹1,020 & Confirm Booking';
+  }, 2000);
+}
+
+// ── CONFIRMATION ──
+function renderConfirmation() {
+  const bookingId = 'SDB' + Date.now().toString().slice(-6);
+  document.getElementById('confirm-ticket').innerHTML = `
+    <div class="ticket-header">
+      <div>
+        <div class="ticket-clinic">Sinha Diabetes Centre</div>
+        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--navy);margin-top:4px">Appointment Ticket</div>
+      </div>
+      <div class="ticket-token-big">Token #${selectedSlot.token}</div>
+    </div>
+    <div class="ticket-rows">
+      <div class="ticket-row">
+        <div class="ticket-icon">👤</div>
+        <div>
+          <div class="ticket-info-label">Patient</div>
+          <div class="ticket-info-val">${patientData.name} · Age ${patientData.age}</div>
+        </div>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-icon">📅</div>
+        <div>
+          <div class="ticket-info-label">Date & Time</div>
+          <div class="ticket-info-val">${days[selectedDate.getDay()]}, ${selectedDate.getDate()} ${months[selectedDate.getMonth()]} — ${selectedSlot.time}</div>
+        </div>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-icon">🏥</div>
+        <div>
+          <div class="ticket-info-label">Reason</div>
+          <div class="ticket-info-val">${patientData.reason}</div>
+        </div>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-icon">💰</div>
+        <div>
+          <div class="ticket-info-label">Amount Paid</div>
+          <div class="ticket-info-val">₹1,020 (incl. ₹20 convenience fee)</div>
+        </div>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-icon">🆔</div>
+        <div>
+          <div class="ticket-info-label">Booking ID</div>
+          <div class="ticket-info-val">${bookingId}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  showToast('✅', `Booking confirmed! Token #${selectedSlot.token} — SMS sent to ${patientData.phone}`);
+}
+
+function bookAnother() {
+  selectedDate = null; selectedSlot = null;
+  patientData = { gender: 'Male', visitType: 'New Patient' };
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-phone').value = '';
+  document.getElementById('inp-age').value = '';
+  document.getElementById('inp-reason').value = '';
+  document.getElementById('slot-section').style.display = 'none';
+  renderDates();
+  goToStep(1);
+}
+
+// ── DASHBOARD ──
+let dashboardPatients = [
+  { token: 1, name: 'Sunita Devi', phone: '98XXXXXXX1', time: '9:00 AM', reason: 'Diabetes Consultation', visitType: 'Follow-up', status: 'confirmed' },
+  { token: 2, name: 'Ramesh Kumar', phone: '97XXXXXXX2', time: '9:05 AM', reason: 'Blood Sugar Review', visitType: 'New Patient', status: 'confirmed' },
+  { token: 3, name: 'Priya Singh', phone: '99XXXXXXX3', time: '9:10 AM', reason: 'Maternity / Pregnancy', visitType: 'New Patient', status: 'waiting' },
+  { token: 4, name: 'Ajay Verma', phone: '96XXXXXXX4', time: '9:15 AM', reason: 'Thyroid Check', visitType: 'Follow-up', status: 'confirmed' },
+  { token: 5, name: 'Meena Gupta', phone: '95XXXXXXX5', time: '9:20 AM', reason: 'Diabetes Consultation', visitType: 'New Patient', status: 'waiting' },
+  { token: 6, name: 'Vikram Yadav', phone: '94XXXXXXX6', time: '9:25 AM', reason: 'General Endocrinology', visitType: 'Follow-up', status: 'cancelled' },
+  { token: 7, name: 'Kavita Sharma', phone: '93XXXXXXX7', time: '9:30 AM', reason: 'Diabetes Consultation', visitType: 'New Patient', status: 'confirmed' },
+  { token: 8, name: 'Rakesh Tiwari', phone: '92XXXXXXX8', time: '9:35 AM', reason: 'Blood Sugar Review', visitType: 'Follow-up', status: 'confirmed' },
+];
+
+function addPatientToDashboard() {
+  dashboardPatients.push({
+    token: dashboardPatients.length + 1,
+    name: patientData.name,
+    phone: patientData.phone,
+    time: selectedSlot.time,
+    reason: patientData.reason,
+    visitType: patientData.visitType,
+    status: 'confirmed'
+  });
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const total = dashboardPatients.filter(p => p.status !== 'cancelled').length;
+  const confirmed = dashboardPatients.filter(p => p.status === 'confirmed').length;
+  const waiting = dashboardPatients.filter(p => p.status === 'waiting').length;
+  const revenue = confirmed * 1000;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-confirmed').textContent = confirmed;
+  document.getElementById('stat-waiting').textContent = waiting;
+  document.getElementById('stat-revenue').textContent = '₹' + revenue.toLocaleString('en-IN');
+
+  const pct = Math.round((total / 60) * 100);
+  document.getElementById('capacity-fill').style.width = pct + '%';
+  document.getElementById('capacity-pct').textContent = `${total} / 60`;
+
+  const today2 = new Date();
+  document.getElementById('dash-date-label').textContent =
+    `📅 ${days[today2.getDay()]}, ${today2.getDate()} ${months[today2.getMonth()]} ${today2.getFullYear()}`;
+
+  renderPatientList(dashboardPatients);
+}
+
+function renderPatientList(patients) {
+  const list = document.getElementById('patient-list');
+  list.innerHTML = '';
+  patients.forEach((p, idx) => {
+    const row = document.createElement('div');
+    row.className = 'patient-row';
+    row.innerHTML = `
+      <div><div class="token-badge">#${p.token}</div></div>
+      <div>
+        <div class="patient-name">${p.name}</div>
+        <div class="patient-phone">${p.reason}</div>
+      </div>
+      <div class="patient-time">${p.time}</div>
+      <div class="patient-type ${p.visitType === 'New Patient' ? 'new' : 'followup'}">${p.visitType === 'New Patient' ? '🟢 New' : '🟡 Follow-up'}</div>
+      <div><span class="status-pill ${p.status}">${p.status.charAt(0).toUpperCase() + p.status.slice(1)}</span></div>
+      <div style="display:flex;gap:6px">
+        ${p.status !== 'cancelled' ? `<button class="action-btn attend" onclick="markAttended(${idx})">✓ Done</button>` : ''}
+        ${p.status !== 'cancelled' ? `<button class="action-btn" onclick="cancelPatient(${idx})">✕</button>` : '<span style="font-size:12px;color:var(--gray-400)">—</span>'}
+      </div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function filterPatients(q) {
+  const filtered = dashboardPatients.filter(p =>
+    p.name.toLowerCase().includes(q.toLowerCase()) ||
+    p.reason.toLowerCase().includes(q.toLowerCase())
+  );
+  renderPatientList(filtered);
+}
+
+function cancelPatient(idx) {
+  dashboardPatients[idx].status = 'cancelled';
+  updateDashboard();
+  showToast('❌', `${dashboardPatients[idx].name}'s appointment cancelled. Slot added to waitlist.`);
+}
+
+function markAttended(idx) {
+  dashboardPatients[idx].status = 'confirmed';
+  updateDashboard();
+  showToast('✅', `${dashboardPatients[idx].name} marked as attended.`);
+}
+
+// ── VIEW SWITCH ──
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  event.target.classList.add('active');
+  if (v === 'dashboard') updateDashboard();
+}
+
+// ── TOAST ──
+function showToast(icon, msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+// ── INIT ──
+renderDates();
+updateDashboard();
+</script>
+</body>
+</html>
