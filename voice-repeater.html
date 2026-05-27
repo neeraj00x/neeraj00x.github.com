@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Buddy 🐸</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --bg: #1a0a2e;
+    --surface: #2d1b4e;
+    --accent1: #ff6b9d;
+    --accent2: #c084fc;
+    --accent3: #67e8f9;
+    --accent4: #86efac;
+    --accent5: #fbbf24;
+    --text: #f0e6ff;
+    --text-dim: #a78bca;
+    --glow1: rgba(255, 107, 157, 0.4);
+    --glow2: rgba(192, 132, 252, 0.4);
+    --glow3: rgba(103, 232, 249, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Animated starfield background */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d, 3s) ease-in-out infinite var(--delay, 0s);
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.1; transform: scale(1); }
+    50% { opacity: 0.9; transform: scale(1.4); }
+  }
+
+  /* Floating blobs */
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+    animation: blobFloat 8s ease-in-out infinite;
+  }
+  .blob1 { width: 400px; height: 400px; background: rgba(255,107,157,0.12); top: -100px; left: -100px; animation-delay: 0s; }
+  .blob2 { width: 350px; height: 350px; background: rgba(192,132,252,0.12); bottom: -80px; right: -80px; animation-delay: -4s; }
+  .blob3 { width: 300px; height: 300px; background: rgba(103,232,249,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -2s; }
+  @keyframes blobFloat {
+    0%, 100% { transform: translate(0,0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(0.95); }
+  }
+
+  .container {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 24px; padding: 20px;
+    max-width: 480px; width: 100%;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+  }
+  .title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.2rem;
+    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px var(--glow2));
+    line-height: 1;
+  }
+  .subtitle {
+    font-size: 1rem; color: var(--text-dim); font-weight: 600;
+    margin-top: 4px; letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  /* Main Toy Body */
+  .toy-body {
+    background: linear-gradient(145deg, #2d1b4e, #1f1035);
+    border: 2px solid rgba(192, 132, 252, 0.25);
+    border-radius: 32px;
+    padding: 28px;
+    width: 100%;
+    box-shadow: 0 0 60px rgba(192,132,252,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex; flex-direction: column; align-items: center; gap: 20px;
+  }
+
+  /* Mascot / Visualizer */
+  .mascot-area {
+    position: relative;
+    width: 160px; height: 160px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .mascot-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 3px solid transparent;
+    background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent3)) border-box;
+    animation: ringPulse 2s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+  .mascot-ring2 {
+    position: absolute; inset: -12px; border-radius: 50%;
+    border: 2px solid transparent;
+    background: linear-gradient(var(--bg), var(--bg)) padding-box,
+                linear-gradient(135deg, var(--accent3), var(--accent2), var(--accent1)) border-box;
+    opacity: 0.3;
+    animation: ringPulse 2s ease-in-out infinite reverse;
+  }
+  .frog-emoji {
+    font-size: 72px;
+    filter: drop-shadow(0 4px 20px rgba(134,239,172,0.4));
+    transition: transform 0.1s;
+    user-select: none;
+    animation: frogBob 2s ease-in-out infinite;
+  }
+  @keyframes frogBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(-3deg); }
+    75% { transform: translateY(-3px) rotate(3deg); }
+  }
+  .frog-emoji.listening { animation: frogListen 0.4s ease-in-out infinite; }
+  @keyframes frogListen {
+    0%, 100% { transform: scale(1) rotate(-2deg); }
+    50% { transform: scale(1.08) rotate(2deg); }
+  }
+  .frog-emoji.playing { animation: frogPlay 0.3s ease-in-out infinite; }
+  @keyframes frogPlay {
+    0%, 100% { transform: scale(1) translateY(0); }
+    25% { transform: scale(1.1) translateY(-8px) rotate(-5deg); }
+    75% { transform: scale(1.05) translateY(-4px) rotate(5deg); }
+  }
+
+  /* Waveform canvas */
+  .waveform-wrap {
+    width: 100%; height: 64px; position: relative;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.25);
+    overflow: hidden;
+    border: 1px solid rgba(192,132,252,0.15);
+  }
+  canvas#waveform {
+    width: 100%; height: 100%; display: block;
+  }
+  .waveform-label {
+    position: absolute; top: 6px; left: 10px;
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* Status badge */
+  .status-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 100px; padding: 8px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    min-width: 180px; justify-content: center;
+  }
+  .status-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--text-dim);
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+  .status-dot.active { background: var(--accent4); box-shadow: 0 0 10px var(--accent4); animation: dotBlink 1s ease-in-out infinite; }
+  .status-dot.recording { background: var(--accent1); box-shadow: 0 0 12px var(--accent1); animation: dotBlink 0.5s ease-in-out infinite; }
+  .status-dot.playing { background: var(--accent3); box-shadow: 0 0 12px var(--accent3); animation: dotBlink 0.4s ease-in-out infinite; }
+  @keyframes dotBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .status-text { font-size: 0.85rem; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+
+  /* Big on/off toggle */
+  .power-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    border: none; cursor: pointer; outline: none;
+    position: relative;
+    background: linear-gradient(145deg, #3d2060, #261040);
+    box-shadow: 0 0 0 4px rgba(192,132,252,0.2), 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .power-btn:hover { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(192,132,252,0.35), 0 12px 40px rgba(0,0,0,0.5); }
+  .power-btn:active { transform: scale(0.96); }
+  .power-btn.on {
+    background: linear-gradient(145deg, #4ade80, #16a34a);
+    box-shadow: 0 0 0 4px rgba(74,222,128,0.3), 0 0 40px rgba(74,222,128,0.3), 0 8px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .power-btn .power-icon { font-size: 2rem; line-height: 1; }
+
+  /* Controls row */
+  .controls-row {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    justify-content: center;
+  }
+
+  /* Sliders panel */
+  .sliders-panel {
+    width: 100%;
+    background: rgba(0,0,0,0.2);
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .slider-row { display: flex; flex-direction: column; gap: 6px; }
+  .slider-label {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-dim);
+  }
+  .slider-label span.val {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem; color: var(--text);
+  }
+  input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.1); outline: none; cursor: pointer;
+  }
+  input[type=range].pink { accent-color: var(--accent1); }
+  input[type=range].purple { accent-color: var(--accent2); }
+  input[type=range].cyan { accent-color: var(--accent3); }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    cursor: pointer; border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  input[type=range].pink::-webkit-slider-thumb { background: var(--accent1); }
+  input[type=range].purple::-webkit-slider-thumb { background: var(--accent2); }
+  input[type=range].cyan::-webkit-slider-thumb { background: var(--accent3); }
+
+  /* Effects row */
+  .effects-row {
+    display: flex; gap: 8px; width: 100%; flex-wrap: wrap;
+  }
+  .effect-btn {
+    flex: 1; min-width: 70px;
+    padding: 8px 6px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.25);
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.72rem;
+    cursor: pointer; transition: all 0.2s;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .effect-btn .eff-icon { font-size: 1.3rem; display: block; margin-bottom: 2px; }
+  .effect-btn:hover { border-color: var(--accent2); color: var(--text); background: rgba(192,132,252,0.1); }
+  .effect-btn.selected {
+    border-color: var(--accent2);
+    background: rgba(192,132,252,0.2);
+    color: var(--text);
+    box-shadow: 0 0 12px rgba(192,132,252,0.3);
+  }
+
+  /* History row */
+  .history-wrap {
+    width: 100%;
+  }
+  .history-title {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+    color: var(--text-dim); margin-bottom: 8px;
+  }
+  .history-clips {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .clip-btn {
+    padding: 6px 14px; border-radius: 100px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.25);
+    color: var(--text-dim);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700; font-size: 0.75rem;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .clip-btn:hover { border-color: var(--accent3); color: var(--text); background: rgba(103,232,249,0.1); }
+  .clip-btn.playing-clip { border-color: var(--accent3); color: var(--accent3); box-shadow: 0 0 10px rgba(103,232,249,0.3); }
+
+  /* Loudness bar */
+  .loudness-bar-wrap {
+    width: 100%; display: flex; align-items: center; gap: 10px;
+  }
+  .loudness-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); white-space: nowrap; }
+  .loudness-track {
+    flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;
+  }
+  .loudness-fill {
+    height: 100%; width: 0%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent4), var(--accent5), var(--accent1));
+    transition: width 0.05s linear;
+    box-shadow: 0 0 8px rgba(251,191,36,0.5);
+  }
+  .threshold-marker {
+    position: relative; margin-left: -2px;
+    width: 3px; height: 14px; background: var(--accent1);
+    border-radius: 2px; flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent1);
+  }
+
+  /* Repeat count */
+  .repeat-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .repeat-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); }
+  .repeat-btns { display: flex; gap: 6px; }
+  .rep-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 2px solid rgba(255,255,255,0.1);
+    background: rgba(0,0,0,0.25);
+    color: var(--text-dim); font-family: 'Fredoka One', cursive;
+    font-size: 0.9rem; cursor: pointer; transition: all 0.15s;
+  }
+  .rep-btn:hover, .rep-btn.active {
+    border-color: var(--accent5); color: var(--accent5);
+    background: rgba(251,191,36,0.1); box-shadow: 0 0 10px rgba(251,191,36,0.2);
+  }
+
+  /* Notification toast */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: rgba(45,27,78,0.95);
+    border: 1.5px solid rgba(192,132,252,0.3);
+    color: var(--text); font-weight: 700; font-size: 0.85rem;
+    padding: 10px 20px; border-radius: 100px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 100; white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Volume burst rings on playback */
+  .burst-ring {
+    position: absolute; border-radius: 50%;
+    border: 2px solid var(--accent3);
+    opacity: 0;
+    pointer-events: none;
+  }
+  @keyframes burstAnim {
+    0% { width: 80px; height: 80px; left: 40px; top: 40px; opacity: 0.8; }
+    100% { width: 200px; height: 200px; left: -20px; top: -20px; opacity: 0; }
+  }
+
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(192,132,252,0.2), transparent);
+  }
+
+  @media (max-width: 400px) {
+    .title { font-size: 2.5rem; }
+    .toy-body { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background elements -->
+<div class="stars" id="stars"></div>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="blob blob3"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="title">Echo Buddy</div>
+    <div class="subtitle">🎙 Talk · 🔊 Listen · 😂 Repeat</div>
+  </div>
+
+  <div class="toy-body">
+
+    <!-- Mascot -->
+    <div class="mascot-area">
+      <div class="mascot-ring2"></div>
+      <div class="mascot-ring"></div>
+      <div class="frog-emoji" id="frog">🐸</div>
+    </div>
+
+    <!-- Loudness meter -->
+    <div class="loudness-bar-wrap">
+      <div class="loudness-label">🔊 Vol</div>
+      <div class="loudness-track">
+        <div class="loudness-fill" id="loudnessFill"></div>
+      </div>
+      <div class="threshold-marker" id="thresholdMarker" title="Trigger threshold"></div>
+    </div>
+
+    <!-- Waveform -->
+    <div class="waveform-wrap">
+      <div class="waveform-label">Live</div>
+      <canvas id="waveform"></canvas>
+    </div>
+
+    <!-- Status -->
+    <div class="status-badge">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-text" id="statusText">Off</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Power button + Repeat -->
+    <div class="controls-row">
+      <button class="power-btn" id="powerBtn" title="Toggle Echo Buddy on/off">
+        <span class="power-icon">⏻</span>
+      </button>
+    </div>
+
+    <!-- Repeat count -->
+    <div class="repeat-row">
+      <div class="repeat-label">🔁 Repeats</div>
+      <div class="repeat-btns">
+        <button class="rep-btn active" data-val="1">1×</button>
+        <button class="rep-btn" data-val="2">2×</button>
+        <button class="rep-btn" data-val="3">3×</button>
+        <button class="rep-btn" data-val="5">5×</button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Sliders -->
+    <div class="sliders-panel">
+      <div class="slider-row">
+        <div class="slider-label">
+          🎚 Trigger Volume <span class="val" id="threshVal">20%</span>
+        </div>
+        <input type="range" id="threshSlider" class="pink" min="5" max="80" value="20">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          ⏱ Max Record Time <span class="val" id="maxRecVal">3s</span>
+        </div>
+        <input type="range" id="maxRecSlider" class="purple" min="1" max="10" value="3">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label">
+          🤫 Silence Gap <span class="val" id="silenceVal">0.8s</span>
+        </div>
+        <input type="range" id="silenceSlider" class="cyan" min="3" max="20" value="8">
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Voice Effects -->
+    <div style="width:100%">
+      <div class="history-title">🎨 Voice Effects</div>
+      <div class="effects-row">
+        <button class="effect-btn selected" data-effect="normal">
+          <span class="eff-icon">😊</span>Normal
+        </button>
+        <button class="effect-btn" data-effect="chipmunk">
+          <span class="eff-icon">🐿</span>Chipmunk
+        </button>
+        <button class="effect-btn" data-effect="robot">
+          <span class="eff-icon">🤖</span>Robot
+        </button>
+        <button class="effect-btn" data-effect="echo">
+          <span class="eff-icon">🏔</span>Echo
+        </button>
+        <button class="effect-btn" data-effect="giant">
+          <span class="eff-icon">🦕</span>Giant
+        </button>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Clip History -->
+    <div class="history-wrap">
+      <div class="history-title">📼 Last 5 Clips (tap to replay)</div>
+      <div class="history-clips" id="historyClips">
+        <span style="font-size:0.75rem;color:var(--text-dim);">No clips yet…</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Stars ──────────────────────────────────────────────────────────────
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 80; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  const size = Math.random() * 2.5 + 0.5;
+  s.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${(Math.random()*4+2).toFixed(1)}s;--delay:${(Math.random()*5).toFixed(1)}s`;
+  starsEl.appendChild(s);
+}
+
+// ── State ──────────────────────────────────────────────────────────────
+let isOn = false;
+let audioCtx = null;
+let analyser = null;
+let micStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let isPlaying = false;
+let silenceTimer = null;
+let maxRecTimer = null;
+let animFrame = null;
+let clips = []; // {blob, id}
+let clipCounter = 0;
+let repeatCount = 1;
+let currentEffect = 'normal';
+
+// Settings
+let triggerThreshold = 20;  // 0-100
+let maxRecSec = 3;
+let silenceGapSec = 0.8;
+
+// ── DOM refs ──────────────────────────────────────────────────────────
+const powerBtn   = document.getElementById('powerBtn');
+const frog       = document.getElementById('frog');
+const statusDot  = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const loudFill   = document.getElementById('loudnessFill');
+const threshMark = document.getElementById('thresholdMarker');
+const waveCanvas = document.getElementById('waveform');
+const waveCtx    = waveCanvas.getContext('2d');
+const toast      = document.getElementById('toast');
+
+// ── Resize canvas ────────────────────────────────────────────────────
+function resizeCanvas() {
+  waveCanvas.width  = waveCanvas.offsetWidth;
+  waveCanvas.height = waveCanvas.offsetHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ── Toast ─────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add('show');
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+// ── Status helpers ────────────────────────────────────────────────────
+function setStatus(state, text) {
+  statusDot.className = 'status-dot ' + state;
+  statusText.textContent = text;
+}
+
+// ── Sliders ───────────────────────────────────────────────────────────
+const threshSlider = document.getElementById('threshSlider');
+const maxRecSlider = document.getElementById('maxRecSlider');
+const silenceSlider = document.getElementById('silenceSlider');
+
+function updateThreshMarker() {
+  const pct = triggerThreshold / 100;
+  const trackWidth = threshMark.parentElement.querySelector('.loudness-track').offsetWidth;
+  threshMark.parentElement.querySelector('.loudness-fill') && null;
+  // position the marker relative to the loudness track
+  // it's already inline after the track; we style it via CSS
+}
+
+threshSlider.addEventListener('input', () => {
+  triggerThreshold = +threshSlider.value;
+  document.getElementById('threshVal').textContent = triggerThreshold + '%';
+});
+maxRecSlider.addEventListener('input', () => {
+  maxRecSec = +maxRecSlider.value;
+  document.getElementById('maxRecVal').textContent = maxRecSec + 's';
+});
+silenceSlider.addEventListener('input', () => {
+  silenceGapSec = +silenceSlider.value / 10;
+  document.getElementById('silenceVal').textContent = silenceGapSec.toFixed(1) + 's';
+});
+
+// ── Repeat buttons ────────────────────────────────────────────────────
+document.querySelectorAll('.rep-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.rep-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    repeatCount = +btn.dataset.val;
+  });
+});
+
+// ── Effect buttons ────────────────────────────────────────────────────
+document.querySelectorAll('.effect-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.effect-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    currentEffect = btn.dataset.effect;
+    showToast(`Effect: ${btn.querySelector('.eff-icon').textContent} ${currentEffect}`);
+  });
+});
+
+// ── Power toggle ──────────────────────────────────────────────────────
+powerBtn.addEventListener('click', () => {
+  isOn ? turnOff() : turnOn();
+});
+
+async function turnOn() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.6;
+
+    const source = audioCtx.createMediaStreamSource(micStream);
+    source.connect(analyser);
+
+    isOn = true;
+    powerBtn.classList.add('on');
+    setStatus('active', 'Listening…');
+    frog.classList.remove('listening','playing');
+    showToast('🐸 Echo Buddy is ON!');
+    startMonitoring();
+  } catch(e) {
+    showToast('🎙 Microphone access denied!');
+    console.error(e);
+  }
+}
+
+function turnOff() {
+  isOn = false;
+  stopRecording(false);
+  if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+  cancelAnimationFrame(animFrame);
+  clearTimeout(silenceTimer);
+  clearTimeout(maxRecTimer);
+  powerBtn.classList.remove('on');
+  frog.className = 'frog-emoji';
+  setStatus('', 'Off');
+  loudFill.style.width = '0%';
+  clearWaveform();
+  showToast('🐸 Echo Buddy is OFF');
+}
+
+// ── Monitoring loop ───────────────────────────────────────────────────
+const dataArray = new Uint8Array(512);
+const waveArray = new Uint8Array(1024);
+
+function startMonitoring() {
+  if (!isOn) return;
+  animFrame = requestAnimationFrame(monitorLoop);
+}
+
+function monitorLoop() {
+  if (!isOn) return;
+  animFrame = requestAnimationFrame(monitorLoop);
+
+  // Volume
+  analyser.getByteFrequencyData(dataArray);
+  let sum = 0;
+  for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+  const avgVol = (sum / dataArray.length / 255) * 100;
+
+  loudFill.style.width = Math.min(avgVol * 2.5, 100) + '%';
+
+  // Draw waveform
+  analyser.getByteTimeDomainData(waveArray);
+  drawWaveform(waveArray, avgVol);
+
+  // Recording logic
+  if (!isPlaying) {
+    if (!isRecording) {
+      if (avgVol > triggerThreshold) {
+        startRecording();
+      }
+    } else {
+      if (avgVol > triggerThreshold * 0.4) {
+        // Sound still happening – reset silence timer
+        clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(stopAndPlay, silenceGapSec * 1000);
+      }
+    }
+  }
+}
+
+// ── Waveform draw ─────────────────────────────────────────────────────
+function drawWaveform(data, vol) {
+  const w = waveCanvas.width, h = waveCanvas.height;
+  waveCtx.clearRect(0,0,w,h);
+
+  const alpha = Math.min(0.3 + vol/60, 1);
+  const grad = waveCtx.createLinearGradient(0,0,w,0);
+  grad.addColorStop(0, `rgba(255,107,157,${alpha})`);
+  grad.addColorStop(0.5, `rgba(192,132,252,${alpha})`);
+  grad.addColorStop(1, `rgba(103,232,249,${alpha})`);
+
+  waveCtx.strokeStyle = grad;
+  waveCtx.lineWidth = 2;
+  waveCtx.shadowColor = 'rgba(192,132,252,0.6)';
+  waveCtx.shadowBlur = vol > triggerThreshold ? 8 : 3;
+
+  waveCtx.beginPath();
+  const slice = w / data.length;
+  let x = 0;
+  for (let i = 0; i < data.length; i++) {
+    const y = (data[i] / 255) * h;
+    i === 0 ? waveCtx.moveTo(x, y) : waveCtx.lineTo(x, y);
+    x += slice;
+  }
+  waveCtx.stroke();
+}
+
+function clearWaveform() {
+  waveCtx.clearRect(0,0,waveCanvas.width,waveCanvas.height);
+  // draw flat line
+  waveCtx.strokeStyle = 'rgba(192,132,252,0.2)';
+  waveCtx.lineWidth = 1.5;
+  waveCtx.beginPath();
+  waveCtx.moveTo(0, waveCanvas.height/2);
+  waveCtx.lineTo(waveCanvas.width, waveCanvas.height/2);
+  waveCtx.stroke();
+}
+
+// ── Recording ─────────────────────────────────────────────────────────
+function startRecording() {
+  if (isRecording || !micStream) return;
+  isRecording = true;
+  recordedChunks = [];
+
+  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+    ? 'audio/webm;codecs=opus' : 'audio/webm';
+  mediaRecorder = new MediaRecorder(micStream, { mimeType });
+
+  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
+  mediaRecorder.onstop = () => finishRecording();
+  mediaRecorder.start();
+
+  setStatus('recording', '🔴 Recording…');
+  frog.className = 'frog-emoji listening';
+
+  // Silence timer starts immediately
+  silenceTimer = setTimeout(stopAndPlay, silenceGapSec * 1000);
+  // Hard max time
+  maxRecTimer = setTimeout(stopAndPlay, maxRecSec * 1000);
+}
+
+function stopRecording(doPlay) {
+  if (!isRecording) return;
+  isRecording = false;
+  clearTimeout(silenceTimer);
+  clearTimeout(maxRecTimer);
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder._doPlay = doPlay;
+    mediaRecorder.stop();
+  }
+}
+
+function stopAndPlay() { stopRecording(true); }
+
+async function finishRecording() {
+  if (!recordedChunks.length) {
+    isRecording = false;
+    if (isOn) setStatus('active', 'Listening…');
+    frog.className = 'frog-emoji';
+    return;
+  }
+
+  const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+  const shouldPlay = mediaRecorder._doPlay !== false;
+
+  // Save to history
+  const id = ++clipCounter;
+  clips.unshift({ blob, id });
+  if (clips.length > 5) clips.pop();
+  renderHistory();
+
+  if (shouldPlay) {
+    await playBlob(blob, repeatCount);
+  }
+  if (isOn) {
+    setStatus('active', 'Listening…');
+    frog.className = 'frog-emoji';
+  }
+}
+
+// ── Apply audio effect ────────────────────────────────────────────────
+async function applyEffect(audioBuffer) {
+  if (!audioCtx) return audioBuffer;
+  const effect = currentEffect;
+  if (effect === 'normal') return audioBuffer;
+
+  const offline = new OfflineAudioContext(
+    audioBuffer.numberOfChannels,
+    Math.ceil(audioBuffer.duration * (effect === 'chipmunk' ? 0.5 : effect === 'giant' ? 2 : 1) * audioCtx.sampleRate),
+    audioCtx.sampleRate
+  );
+
+  const source = offline.createBufferSource();
+  source.buffer = audioBuffer;
+
+  if (effect === 'chipmunk') {
+    source.playbackRate.value = 1.8;
+  } else if (effect === 'giant') {
+    source.playbackRate.value = 0.55;
+  } else if (effect === 'robot') {
+    // Ring modulation
+    const osc = offline.createOscillator();
+    osc.frequency.value = 50;
+    const gain1 = offline.createGain();
+    const gain2 = offline.createGain();
+    osc.connect(gain1);
+    source.connect(gain2);
+    // Simple approach: distort
+    const waveshaper = offline.createWaveShaper();
+    const curve = new Float32Array(256);
+    for (let i = 0; i < 256; i++) {
+      const x = (i * 2) / 256 - 1;
+      curve[i] = (Math.PI + 200) * x / (Math.PI + 200 * Math.abs(x));
+    }
+    waveshaper.curve = curve;
+    source.connect(waveshaper);
+    waveshaper.connect(offline.destination);
+    osc.start(0); source.start(0);
+    return await offline.startRendering();
+  } else if (effect === 'echo') {
+    const delay = offline.createDelay(5);
+    delay.delayTime.value = 0.35;
+    const feedback = offline.createGain(); feedback.gain.value = 0.45;
+    const dryGain = offline.createGain(); dryGain.gain.value = 0.7;
+    source.connect(dryGain); dryGain.connect(offline.destination);
+    source.connect(delay); delay.connect(feedback); feedback.connect(delay);
+    delay.connect(offline.destination);
+    source.start(0);
+    return await offline.startRendering();
+  }
+
+  source.connect(offline.destination);
+  source.start(0);
+  return await offline.startRendering();
+}
+
+// ── Playback ──────────────────────────────────────────────────────────
+async function playBlob(blob, times = 1) {
+  if (!audioCtx) return;
+  isPlaying = true;
+  setStatus('playing', '🔊 Playing…');
+  frog.className = 'frog-emoji playing';
+
+  try {
+    const arrayBuf = await blob.arrayBuffer();
+    let decoded = await audioCtx.decodeAudioData(arrayBuf);
+    const processed = await applyEffect(decoded);
+
+    for (let i = 0; i < times; i++) {
+      if (!isOn && i > 0) break;
+      await new Promise(resolve => {
+        const src = audioCtx.createBufferSource();
+        src.buffer = processed;
+        src.connect(audioCtx.destination);
+        src.onended = resolve;
+        src.start(0);
+      });
+      if (i < times - 1) await sleep(180);
+    }
+  } catch(e) {
+    console.error('Playback error', e);
+  }
+
+  isPlaying = false;
+}
+
+async function playBlobOnce(blob) {
+  if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  if (audioCtx.state === 'suspended') await audioCtx.resume();
+  await playBlob(blob, 1);
+  if (isOn) { setStatus('active', 'Listening…'); frog.className = 'frog-emoji'; }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── History ───────────────────────────────────────────────────────────
+function renderHistory() {
+  const wrap = document.getElementById('historyClips');
+  if (!clips.length) { wrap.innerHTML = '<span style="font-size:0.75rem;color:var(--text-dim);">No clips yet…</span>'; return; }
+  wrap.innerHTML = '';
+  clips.forEach((clip, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'clip-btn';
+    btn.innerHTML = `▶ #${clip.id}`;
+    btn.title = `Play clip ${clip.id}`;
+    btn.addEventListener('click', async () => {
+      document.querySelectorAll('.clip-btn').forEach(b => b.classList.remove('playing-clip'));
+      btn.classList.add('playing-clip');
+      await playBlobOnce(clip.blob);
+      btn.classList.remove('playing-clip');
+    });
+    wrap.appendChild(btn);
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────
+clearWaveform();
+renderHistory();
+</script>
+</body>
+</html>
